@@ -33,12 +33,10 @@ func transform(rc io.ReadCloser) (io.ReadCloser, error) {
 		defer pw.Close()
 		dec := json.NewDecoder(rc)
 		// read open bracket
-		t, err := dec.Token()
+		_, err := dec.Token()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%T: %v\n", t, t)
-
 		// while the array contains values
 		for dec.More() {
 			var gc GitCommit
