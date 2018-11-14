@@ -49,7 +49,7 @@ func transform(rc io.ReadCloser) (io.ReadCloser, error) {
 		}
 
 		// read closing bracket
-		t, err = dec.Token()
+		_, err = dec.Token()
 		if err != nil {
 			log.Fatal(err)
 		}
