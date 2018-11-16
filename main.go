@@ -55,10 +55,7 @@ func transform(rc io.ReadCloser) (io.ReadCloser, error) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			// err := jsoniter.Unmarshal(, &gc)
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
+
 			pw.Write([]byte(fmt.Sprintf("%v",
 				struct {
 					name  string
