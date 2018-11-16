@@ -1,11 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"time"
+
+	"github.com/json-iterator/go"
+	"github.com/mitchellh/mapstructure"
 )
 
 func main() {
@@ -31,28 +34,44 @@ func transform(rc io.ReadCloser) (io.ReadCloser, error) {
 	pr, pw := io.Pipe()
 	go func() {
 		defer pw.Close()
-		dec := json.NewDecoder(rc)
+		iter := jsoniter.Parse(jsoniter.ConfigFastest, rc, 1000)
 		// read open bracket
-		_, err := dec.Token()
-		if err != nil {
-			log.Fatal(err)
-		}
+
 		// while the array contains values
-		for dec.More() {
+		for iter.ReadArray() {
 			var gc GitCommit
 			// decode an array value (GitCommit)
-			err := dec.Decode(&gc)
+
+			obj := iter.Read()
+			config := &mapstructure.DecoderConfig{
+				DecodeHook: mapstructure.StringToTimeHookFunc("2006-01-02T15:04:05Z"),
+				Result:     &gc,
+			}
+			dec, err := mapstructure.NewDecoder(config)
 			if err != nil {
 				log.Fatal(err)
 			}
-			pw.Write([]byte(fmt.Sprintf("%v", gc)))
+			err = dec.Decode(obj)
+			if err != nil {
+				log.Fatal(err)
+			}
+			// err := jsoniter.Unmarshal(, &gc)
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+			pw.Write([]byte(fmt.Sprintf("%v",
+				struct {
+					name  string
+					email string
+					time  string
+				}{
+					gc.Commit.Author.Name,
+					gc.Commit.Author.Email,
+					gc.Commit.Author.Date.Format(time.RFC3339),
+				})))
+
 		}
 
-		// read closing bracket
-		_, err = dec.Token()
-		if err != nil {
-			log.Fatal(err)
-		}
 	}()
 
 	return pr, nil

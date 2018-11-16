@@ -2,35 +2,11 @@ package main
 
 import "time"
 
-// GitCommit represents a git commit.
+// GitCommit represents a git commit holding the commit and metadata.
 type GitCommit struct {
-	Sha    string `json:"sha"`
-	NodeID string `json:"node_id"`
-	Commit struct {
-		Author struct {
-			Name  string    `json:"name"`
-			Email string    `json:"email"`
-			Date  time.Time `json:"date"`
-		} `json:"author"`
-		Committer struct {
-			Name  string    `json:"name"`
-			Email string    `json:"email"`
-			Date  time.Time `json:"date"`
-		} `json:"committer"`
-		Message string `json:"message"`
-		Tree    struct {
-			Sha string `json:"sha"`
-			URL string `json:"url"`
-		} `json:"tree"`
-		URL          string `json:"url"`
-		CommentCount int    `json:"comment_count"`
-		Verification struct {
-			Verified  bool   `json:"verified"`
-			Reason    string `json:"reason"`
-			Signature string `json:"signature"`
-			Payload   string `json:"payload"`
-		} `json:"verification"`
-	} `json:"commit"`
+	Sha         string `json:"sha"`
+	NodeID      string `json:"node_id"`
+	Commit      Commit `json:"commit"`
 	URL         string `json:"url"`
 	HTMLURL     string `json:"html_url"`
 	CommentsURL string `json:"comments_url"`
@@ -79,4 +55,31 @@ type GitCommit struct {
 		URL     string `json:"url"`
 		HTMLURL string `json:"html_url"`
 	} `json:"parents"`
+}
+
+// Commit represents a commit.
+type Commit struct {
+	Author struct {
+		Name  string    `json:"name"`
+		Email string    `json:"email"`
+		Date  time.Time `json:"date"`
+	} `json:"author"`
+	Committer struct {
+		Name  string    `json:"name"`
+		Email string    `json:"email"`
+		Date  time.Time `json:"date"`
+	} `json:"committer"`
+	Message string `json:"message"`
+	Tree    struct {
+		Sha string `json:"sha"`
+		URL string `json:"url"`
+	} `json:"tree"`
+	URL          string `json:"url"`
+	CommentCount int    `json:"comment_count"`
+	Verification struct {
+		Verified  bool   `json:"verified"`
+		Reason    string `json:"reason"`
+		Signature string `json:"signature"`
+		Payload   string `json:"payload"`
+	} `json:"verification"`
 }
